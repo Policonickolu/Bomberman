@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="utf-8">
+	<title>Bomberman</title>
+	<link rel="stylesheet" type="text/css" href="css/style.css" />
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+	<script type="text/javascript" src="js/phaser.min.js"></script>
+	<style type="text/css">
+	body {
+		margin: 0;
+	}
+	</style>
+</head>
+<body>
+
+	<div class="navbar navbar-default">
+		<div class="container">
+			<div class="navbar-header">
+				<a href="" class="navbar-brand">Bomberman</a>
+			</div>
+			<div class="navbar-collapse collapse" id="navbar-main">
+				<form class="navbar-form navbar-right">
+				    <input id="nom" class="form-control" type="text" placeholder="Nom de joueur"></input>
+				</form>
+			</div>
+		</div>
+	</div>
+
+
+<div class="container">
+	<div class="row">
+		<div class="col-lg-8 well" id="jeu">
+		</div>
+
+		<div class="row">
+			<div class="col-lg-4" id="menu">
+			</div>
+			<div class="col-lg-4" id="message">
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+<!-- LES SCRIPTS -->
+<script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
+<script type="text/javascript">
+		
+
+	var game = new Phaser.Game(650, 650, Phaser.AUTO, 'jeu', { preload: preload, create: create, update: update });
+	var cursors;
+	var joueur1;
+	var terrain;
+
+	var platforms;
+	var map;
+	var tileset;
+	var layer;
+
+	var cursors;
+	var sprite;
+
+	function preload() {
+		game.load.tilemap('terrain', 'assets/map.json', null, Phaser.Tilemap.TILED_JSON);
+		game.load.spritesheet('bomb', 'assets/bombe.png', 33, 33, 3);
+		game.load.spritesheet('joueur1', 'assets/joueurblanc.png', 43, 45, 12);
+		game.load.spritesheet('joueur2', 'assets/joueurnoir.png', 43, 45, 12);
+		game.load.spritesheet('joueur3', 'assets/joueurbleu.png', 43, 45, 12);
+		game.load.spritesheet('joueur4', 'assets/joueurrouge.png', 43, 45, 12);
+
+			    /*game.load.spritesheet('mort', 'resources/images/arena_bomber_death.png');
+			    game.load.spritesheet('flamme', 'resources/images/arena_flame.png');
+			    game.load.spritesheet('objet', 'resources/images/arena_item.png');
+			    game.load.spritesheet('mur', 'resources/images/arena_wall.png');
+			    game.load.spritesheet('bomberman', 'resources/images/bomberman.png');
+			    game.load.spritesheet('gagnant', 'resources/images/winner_bomber.png');
+			    game.load.spritesheet('zone', 'resources/images/chemin.png');*/
+
+
+			}
+
+			
+			var ecartJX = (50/2) - (43/2);
+			var ecartJY = (50/2) - (43/2);
+
+			function create() {
+				
+
+				bomb = game.add.sprite(200,200, 'bomb');
+				bomb.animations.add('bomb', [0,1,2], 7, true);
+
+
+				joueur1 = game.add.sprite(0,0, 'joueur1');
+				joueur2 = game.add.sprite(0,600, 'joueur2');
+				joueur3 = game.add.sprite(600,0, 'joueur3');
+				joueur4 = game.add.sprite(600,600, 'joueur4');
+
+				joueur1.body.bounce.y = 0.2;
+				joueur1.body.collideWorldBounds = true;
+
+				joueur1.animations.add('bas', [0, 1, 2], 7, true);
+				joueur1.animations.add('droite', [3, 4, 5], 7, true);
+				joueur1.animations.add('gauche', [6, 7, 8], 7, true);
+				joueur1.animations.add('haut', [9, 10, 11], 7, true);
+				joueur1.frame = 1;
+
+				joueur2.animations.add('bas', [0, 1, 2], 7, true);
+				joueur2.animations.add('droite', [3, 4, 5], 7, true);
+				joueur2.animations.add('gauche', [6, 7, 8], 7, true);
+				joueur2.animations.add('haut', [9, 10, 11], 7, true);
+				joueur2.frame = 1;
+
+				joueur3.animations.add('bas', [0, 1, 2], 7, true);
+				joueur3.animations.add('droite', [3, 4, 5], 7, true);
+				joueur3.animations.add('gauche', [6, 7, 8], 7, true);
+				joueur3.animations.add('haut', [9, 10, 11], 7, true);
+				joueur3.frame = 1;
+
+				joueur4.animations.add('bas', [0, 1, 2], 7, true);
+				joueur4.animations.add('droite', [3, 4, 5], 7, true);
+				joueur4.animations.add('gauche', [6, 7, 8], 7, true);
+				joueur4.animations.add('haut', [9, 10, 11], 7, true);
+				joueur4.frame = 1;
+			    
+			    
+			    cursors = game.input.keyboard.createCursorKeys();
+			}
+
+
+	function update() {
+
+		if(currentPartie != null){
+
+
+			if (cursors.left.isDown){
+				deplacer("gauche");
+			}else if (cursors.right.isDown){
+				deplacer("droite");
+			}else if (cursors.up.isDown){
+				deplacer("haut");
+			}else if (cursors.down.isDown){
+				deplacer("bas");
+			}
+
+			joueur1.x =  currentPartie.joueur1.position.x * 50;
+			joueur1.y = currentPartie.joueur1.position.y * 50;
+
+			joueur2.x =  currentPartie.joueur1.position.x * 50;
+			joueur2.y  = currentPartie.joueur1.position.y * 50;
+
+			joueur3.x =  currentPartie.joueur1.position.x * 50;
+			joueur3.y  = currentPartie.joueur1.position.y * 50;
+
+			joueur4.x =  currentPartie.joueur1.position.x * 50;
+			joueur4.y  = currentPartie.joueur1.position.y * 50;
+
+
+		}
+
+
+	}
+
+
+			</script>
+		</body>
+		</html>
